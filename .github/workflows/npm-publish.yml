@@ -1,0 +1,91 @@
+name: Node.js Package
+
+on:
+  push:
+    branches:
+      - main
+  release:
+    types: [created]
+
+jobs:
+  version-check:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+    outputs:
+      is_new_version: ${{ steps.check.outputs.is_new_version }}
+      current_version: ${{ steps.check.outputs.current_version }}
+      published_version: ${{ steps.check.outputs.published_version }}
+      tag_exists: ${{ steps.check-tag.outputs.tag_exists }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - id: check
+        name: Check if version has been updated
+        run: |
+          CURRENT_VERSION=$(node -p "require('./package.json').version")
+          echo "current_version=$CURRENT_VERSION" >> $GITHUB_OUTPUT
+          
+          PUBLISHED_VERSION=$(npm view nuttertools version || echo "0.0.0")
+          echo "published_version=$PUBLISHED_VERSION" >> $GITHUB_OUTPUT
+          
+          if [ "$CURRENT_VERSION" != "$PUBLISHED_VERSION" ]; then
+            echo "is_new_version=true" >> $GITHUB_OUTPUT
+            echo "Version has been updated from $PUBLISHED_VERSION to $CURRENT_VERSION"
+          else
+            echo "is_new_version=false" >> $GITHUB_OUTPUT
+            echo "Version is unchanged at $CURRENT_VERSION"
+          fi
+      - id: check-tag
+        name: Check if tag exists
+        run: |
+          CURRENT_VERSION=$(node -p "require('./package.json').version")
+          if git rev-parse "v$CURRENT_VERSION" >/dev/null 2>&1; then
+            echo "tag_exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "tag_exists=false" >> $GITHUB_OUTPUT
+          fi
+
+  build-and-publish:
+    needs: version-check
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && needs.version-check.outputs.is_new_version == 'true'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          registry-url: https://registry.npmjs.org/
+      - run: npm ci
+      - run: npm run build
+      - run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.NPM_ACCESS_TOKEN}}
+      - name: Log version change
+        run: |
+          echo "Published version ${{ needs.version-check.outputs.current_version }} (previous was ${{ needs.version-check.outputs.published_version }})"
+
+  create-release:
+    needs: [version-check, build-and-publish]
+    runs-on: ubuntu-latest
+    if: |
+      needs.version-check.outputs.is_new_version == 'true' && 
+      needs.version-check.outputs.tag_exists == 'false'
+    permissions:
+      contents: write
+    steps:
+      - name: Create Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ needs.version-check.outputs.current_version }}
+          release_name: Release v${{ needs.version-check.outputs.current_version }}
+          draft: false
+          prerelease: false
+          body: |
+            Release of version ${{ needs.version-check.outputs.current_version }}
+            Package has been published to npm.
