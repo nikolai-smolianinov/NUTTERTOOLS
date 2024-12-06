@@ -1,12 +1,12 @@
 {
   "name": "nuttertools",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Library of reusable utils for personal projects",
   "repository": "https://github.com/nikolai-smolianinov/NUTTERTOOLS",
   "author": "Nikolai Smolianinov <niko_lie@icloud.com> (https://github.com/nikolai-smolianinov)",
   "scripts": {
     "build": "rm -rf dist && npm run build:js && npm run build:types",
-    "build:js": "esbuild src/app/index.ts --bundle --minify --platform=node --target=es2020 --outfile=dist/app/index.js --alias:@=./src --packages=external",
+    "build:js": "esbuild src/app/index.ts --format=esm --bundle --minify --platform=node --target=es2020 --outfile=dist/app/index.js --alias:@=./src --packages=external",
     "build:types": "tsc --emitDeclarationOnly --declaration --outDir dist/ && tsc-alias",
     "ci:release": "npm run build && npm pack"
   },
