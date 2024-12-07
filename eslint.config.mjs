@@ -1,13 +1,13 @@
-const tsParser = require('@typescript-eslint/parser');
-const tsPlugin = require('@typescript-eslint/eslint-plugin');
-const importPlugin = require('eslint-plugin-import');
-const prettierPlugin = require('eslint-plugin-prettier');
-const unicornPlugin = require('eslint-plugin-unicorn');
+import tsParser from '@typescript-eslint/parser';
+import * as tsPlugin from '@typescript-eslint/eslint-plugin';
+import * as importPlugin from 'eslint-plugin-import';
+import * as prettierPlugin from 'eslint-plugin-prettier';
+import * as unicornPlugin from 'eslint-plugin-unicorn';
 
-module.exports = [
+export default [
   {
-    files: ['**/*.{js,jsx,ts,tsx}'],
-    ignores: ['**/*.js', 'build/**/*', 'node_modules/**/*'],
+    files: ['**/*.{ts,tsx}'],
+    ignores: ['build/**/*', 'node_modules/**/*'],
 
     languageOptions: {
       parser: tsParser,
@@ -19,18 +19,29 @@ module.exports = [
     },
 
     plugins: {
-      '@typescript-eslint': tsPlugin,
-      'import': importPlugin,
-      'prettier': prettierPlugin,
-      'unicorn': unicornPlugin
+      '@typescript-eslint': tsPlugin.default,
+      'import': importPlugin.default,
+      'prettier': prettierPlugin.default,
+      'unicorn': unicornPlugin.default
     },
 
     rules: {
+      ...tsPlugin.default.configs.recommended.rules,
+      ...importPlugin.default.configs.recommended.rules,
+      ...unicornPlugin.default.configs.recommended.rules,
+      ...prettierPlugin.default.configs.recommended.rules,
+
       '@typescript-eslint/naming-convention': 'off',
+      '@typescript-eslint/no-explicit-any': 'off',
+      '@typescript-eslint/no-unused-expressions': 'off',
 
       'curly': 'off',
       'no-underscore-dangle': 'off',
       'no-promise-executor-return': 'off',
+
+      'unicorn/no-null': 'off',
+      'unicorn/no-process-exit': 'off',
+      'unicorn/no-array-reduce': 'off',
 
       'import/order': [
         'error',
@@ -43,19 +54,7 @@ module.exports = [
             'caseInsensitive': true
           }
         }
-      ],
-
-      ...tsPlugin.configs['recommended'].rules,
-      ...importPlugin.configs['recommended'].rules,
-      ...unicornPlugin.configs['recommended'].rules,
-      ...prettierPlugin.configs['recommended'].rules,
-
-
-      '@typescript-eslint/no-explicit-any': 'off',
-      'unicorn/no-null': 'off',
-      '@typescript-eslint/no-unused-expressions': 'off',
-      'unicorn/no-process-exit': 'off',
-      'unicorn/no-array-reduce': 'off',
+      ]
     },
 
     settings: {
@@ -70,7 +69,7 @@ module.exports = [
         },
         alias: {
           map: [['@', './src']],
-          extensions: ['.ts', '.js', '.jsx', '.json']
+          extensions: ['.ts', '.tsx', '.js', '.jsx', '.json']
         },
         node: {
           extensions: ['.js', '.jsx', '.ts', '.tsx']
