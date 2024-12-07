@@ -5,11 +5,9 @@
   "repository": "https://github.com/nikolai-smolianinov/NUTTERTOOLS",
   "author": "Nikolai Smolianinov <niko_lie@icloud.com> (https://github.com/nikolai-smolianinov)",
   "scripts": {
-    "build": "rm -rf dist && npm run build:js && npm run build:types",
-    "build:types": "tsc --emitDeclarationOnly --declaration --outDir dist/ && tsc-alias",
+    "build": "rm -rf dist && rollup -c",
     "ci:release": "npm run build && npm pack",
-    "build:js": "node esbuild.config.js",
-    "run:dev": "node esbuild.config.js --dev"
+    "dev": "rollup -c -w"
   },
   "main": "dist/app/index.js",
   "types": "dist/app/index.d.ts",
@@ -28,6 +26,10 @@
   "type": "module",
   "license": "MIT",
   "devDependencies": {
+    "@rollup/plugin-alias": "^5.1.1",
+    "@rollup/plugin-commonjs": "^28.0.1",
+    "@rollup/plugin-node-resolve": "^15.3.0",
+    "@rollup/plugin-typescript": "^12.1.1",
     "@types/mime-types": "^2.1.4",
     "@types/node": "^22.8.7",
     "@typescript-eslint/eslint-plugin": "^8.12.2",
@@ -45,6 +47,7 @@
     "i": "^0.3.7",
     "npm": "^10.9.2",
     "prettier": "^3.1.0",
+    "rollup": "^4.28.1",
     "tsc-alias": "^1.8.10",
     "typescript": "^5.2.2"
   },
