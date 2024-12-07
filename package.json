@@ -1,11 +1,11 @@
 {
   "name": "nuttertools",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "Library of reusable utils for personal projects",
   "repository": "https://github.com/nikolai-smolianinov/NUTTERTOOLS",
   "author": "Nikolai Smolianinov <niko_lie@icloud.com> (https://github.com/nikolai-smolianinov)",
   "scripts": {
-    "build": "rm -rf dist && rollup -c && node create-package-json.js",
+    "build": "rm -rf dist && rollup -c && node create-package-json.js && tsc-alias",
     "dev": "rollup -c -w"
   },
   "main": "dist/app/index.js",
