@@ -8,7 +8,8 @@
     "build": "rm -rf dist && npm run build:js && npm run build:types",
     "build:js": "esbuild src/app/index.ts --format=esm --bundle --minify --platform=node --target=es2020 --outfile=dist/app/index.js --alias:@=./src --packages=external",
     "build:types": "tsc --emitDeclarationOnly --declaration --outDir dist/ && tsc-alias",
-    "ci:release": "npm run build && npm pack"
+    "ci:release": "npm run build && npm pack",
+    "run:dev": "esbuild entry.ts --bundle --minify --platform=node --target=es2020 --outfile=build/app/index.js --alias:@=./src --packages=external && node build/app/index.js"
   },
   "main": "dist/app/index.js",
   "types": "dist/app/index.d.ts",
@@ -19,6 +20,7 @@
   ],
   "license": "MIT",
   "devDependencies": {
+    "@types/mime-types": "^2.1.4",
     "@types/node": "^22.8.7",
     "@typescript-eslint/eslint-plugin": "^8.12.2",
     "@typescript-eslint/parser": "^8.12.2",
@@ -32,8 +34,14 @@
     "eslint-plugin-import-alias": "^1.2.0",
     "eslint-plugin-prettier": "^5.2.1",
     "eslint-plugin-unicorn": "^56.0.0",
+    "i": "^0.3.7",
+    "npm": "^10.9.2",
     "prettier": "^3.1.0",
     "tsc-alias": "^1.8.7",
     "typescript": "^5.2.2"
+  },
+  "dependencies": {
+    "axios": "^1.7.9",
+    "mime-types": "^2.1.35"
   }
 }
