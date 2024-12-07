@@ -7,6 +7,7 @@ import { fileURLToPath } from 'node:url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
+/** @type {import('rollup').RollupOptions} */
 export default {
     input: 'src/app/index.ts',
     output: [
@@ -33,11 +34,17 @@ export default {
         resolve(),
         commonjs(),
         typescript({
-            tsconfig: './tsconfig.json',
+            tsconfig: 'tsconfig.json',
             declaration: true,
+            declarationDir: './dist',
             sourceMap: true,
             outDir: './dist',
-            exclude: ['**/__tests__/**']
+            compilerOptions: {
+                paths: {
+                    "@/*": ["./src/*"]
+                },
+                declarationMap: true
+            }
         })
     ]
 };

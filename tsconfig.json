@@ -8,9 +8,9 @@
     "skipLibCheck": true,
     "outDir": "./dist",
     "declaration": true,
-    "emitDeclarationOnly": true,
-    "baseUrl": "./",
+    "declarationMap": true,
     "sourceMap": true,
+    "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"]
     }
