@@ -1,9 +1,8 @@
 import typescript from '@rollup/plugin-typescript';
 import resolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
-import alias from '@rollup/plugin-alias';
-import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import path from 'node:path';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -25,12 +24,10 @@ export default {
         'mime-types'
     ],
     plugins: [
-        alias({
-            entries: [
-                { find: '@', replacement: './src' }
-            ]
+        resolve({
+            extensions: ['.ts', '.js'],
+            moduleDirectories: ['node_modules', 'src']
         }),
-        resolve(),
         commonjs(),
         typescript({
             tsconfig: 'tsconfig.json',
@@ -39,6 +36,7 @@ export default {
             sourceMap: true,
             outDir: './dist',
             compilerOptions: {
+                moduleResolution: 'node',
                 baseUrl: '.',
                 paths: {
                     "@/*": ["./src/*"]
