@@ -10,15 +10,14 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 /** @type {import('rollup').RollupOptions} */
 export default {
     input: 'src/app/index.ts',
-    output: [
-        {
-            dir: 'dist',
-            format: 'es',
-            sourcemap: true,
-            preserveModules: true,
-            preserveModulesRoot: 'src'
-        }
-    ],
+    output: {
+        dir: 'dist',
+        format: 'es',
+        sourcemap: true,
+        preserveModules: true,
+        preserveModulesRoot: 'src',
+        exports: 'named'
+    },
     external: [
         'node:fs',
         'node:path',
@@ -28,7 +27,7 @@ export default {
     plugins: [
         alias({
             entries: [
-                { find: '@', replacement: path.resolve(__dirname, 'src') }
+                { find: '@', replacement: './src' }
             ]
         }),
         resolve(),
@@ -40,10 +39,10 @@ export default {
             sourceMap: true,
             outDir: './dist',
             compilerOptions: {
+                baseUrl: '.',
                 paths: {
                     "@/*": ["./src/*"]
-                },
-                declarationMap: true
+                }
             }
         })
     ]
